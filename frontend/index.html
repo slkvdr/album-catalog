@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Главная — LOOP</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("loop-theme")||"dark"}catch(e){}</script>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=10">
+  <script src="script.js?v=10" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <header class="site-header" id="top">
+    <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+    <nav aria-label="Главное меню">
+      <ul>
+        <li><a href="index.html" aria-current="page">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="listen-later.html">Мой список</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="login.html" id="auth-link">Войти</a></li>
+        <li><button type="button" class="theme-toggle" id="theme-toggle" aria-label="Включить тёмную тему">☾</button></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main">
+<section class="hero">
+      <div>
+        <h1>Альбомы, которые стоит дослушать до конца</h1>
+        <p>LOOP — ваша персональная медиатека. Находите культовые и современные альбомы, ведите свой список, ставьте оценки и пишите рецензии. Без рекламы.</p>
+        <div class="hero-actions">
+          <a class="button" href="catalog.html">Открыть каталог</a>
+        </div>
+        <ul class="hero-stats" id="hero-stats"></ul>
+      </div>
+      <div class="hero-covers" id="hero-covers" aria-hidden="true"></div>
+    </section>
+    <section>
+      <h2>Подборка недели</h2>
+      <p class="section-note">Лучшие альбомы по оценке LOOP, состав обновляется каждую неделю.</p>
+      <ul class="grid" id="featured"></ul>
+    </section>
+    <section>
+      <h2>Свежие релизы</h2>
+      <ul class="grid" id="fresh"></ul>
+    </section>
+    <section class="surprise" aria-labelledby="surprise-title">
+      <img class="surprise-cover" id="surprise-cover" src="img/placeholder.svg" alt="" width="160" height="160">
+      <div class="surprise-body">
+        <h2 id="surprise-title">Не знаете, что послушать?</h2>
+        <p id="surprise-text">Мы выберем случайный альбом из каталога. Понравится — откроете его страницу.</p>
+        <div class="surprise-actions">
+          <button type="button" id="surprise-button">Показать случайный альбом</button>
+          <a class="button" id="surprise-open" href="catalog.html" hidden>Открыть альбом</a>
+        </div>
+      </div>
+    </section>
+    <section id="genres-section" hidden>
+      <h2>Жанры</h2>
+      <p class="section-note">Откройте каталог сразу с нужным жанром.</p>
+      <ul class="tiles" id="genre-tiles"></ul>
+    </section>
+    <section>
+      <h2>Как это работает</h2>
+      <ol class="steps">
+        <li>
+          <h3>Найдите альбом</h3>
+          <p>Ищите по названию и исполнителю, фильтруйте по жанру и десятилетию.</p>
+        </li>
+        <li>
+          <h3>Ведите свой список</h3>
+          <p>Отмечайте, что хотите послушать, слушаете сейчас и уже прослушали.</p>
+        </li>
+        <li>
+          <h3>Оценивайте и делитесь</h3>
+          <p>Ставьте оценки, делайте личные заметки и пишите рецензии для других слушателей.</p>
+        </li>
+      </ol>
+    </section>
+    <section class="cta" id="cta" aria-labelledby="cta-title">
+      <div class="cta-text">
+        <h2 id="cta-title"></h2>
+        <p id="cta-text"></p>
+        <a class="button" id="cta-link" href="login.html"></a>
+      </div>
+      <ul class="cta-covers" id="cta-covers"></ul>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+        <p>Каталог музыкальных альбомов: находите, оценивайте и дослушивайте до конца.</p>
+      </div>
+      <nav aria-label="Разделы сайта">
+        <p class="footer-title">Разделы</p>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="catalog.html">Каталог</a></li>
+          <li><a href="listen-later.html">Мой список</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
+          <li><a href="login.html" id="footer-auth">Войти</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="footer-title">Контакты</p>
+        <address>
+          <a href="https://t.me/loop_albums">Telegram</a>
+          <a href="https://vk.com/loop_albums">ВКонтакте</a>
+          <a href="tel:+79296427058">+7 (929) 642-70-58</a>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 LOOP · Данные о треклистах: Apple iTunes</p>
+      <a href="#top">Наверх ↑</a>
+    </div>
+  </footer>
+</body>
+</html>

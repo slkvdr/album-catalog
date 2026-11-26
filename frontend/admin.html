@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Управление — LOOP</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("loop-theme")||"dark"}catch(e){}</script>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=10">
+  <script src="script.js?v=10" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <header class="site-header" id="top">
+    <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+    <nav aria-label="Главное меню">
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="listen-later.html">Мой список</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="login.html" id="auth-link">Войти</a></li>
+        <li><button type="button" class="theme-toggle" id="theme-toggle" aria-label="Включить тёмную тему">☾</button></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main">
+    <h1>Управление</h1>
+    <p id="admin-denied" hidden>Эта страница доступна только администратору. <a href="login.html">Войти</a></p>
+    <div id="admin-area" hidden>
+      <div class="tabs" role="tablist" aria-label="Разделы управления">
+        <button type="button" class="tab" role="tab" id="tab-albums" aria-selected="true" aria-controls="panel-albums">Альбомы</button>
+        <button type="button" class="tab" role="tab" id="tab-messages" aria-selected="false" aria-controls="panel-messages" tabindex="-1">Сообщения <span class="tab-count" id="messages-count"></span></button>
+      </div>
+      <div class="admin-grid" role="tabpanel" id="panel-albums" aria-labelledby="tab-albums">
+        <section class="admin-card" aria-labelledby="add-title">
+          <h2 id="add-title">Добавить альбом</h2>
+          <form class="auth-form" id="admin-form" novalidate>
+            <div class="field">
+              <label for="admin-title">Название</label>
+              <input type="text" id="admin-title" name="title" aria-describedby="admin-title-error">
+              <p class="field-error" id="admin-title-error"></p>
+            </div>
+            <div class="field">
+              <label for="admin-artist">Исполнитель</label>
+              <input type="text" id="admin-artist" name="artist" aria-describedby="admin-artist-error">
+              <p class="field-error" id="admin-artist-error"></p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="admin-year">Год выпуска</label>
+                <input type="text" id="admin-year" name="year" inputmode="numeric" aria-describedby="admin-year-error">
+                <p class="field-error" id="admin-year-error"></p>
+              </div>
+              <div class="field">
+                <label for="admin-rating">Стартовая оценка (1–5)</label>
+                <input type="text" id="admin-rating" name="rating" inputmode="decimal" aria-describedby="admin-rating-error">
+                <p class="field-error" id="admin-rating-error"></p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="admin-genre">Жанр</label>
+              <input type="text" id="admin-genre" name="genre" list="genre-options" autocomplete="off" aria-describedby="admin-genre-error">
+              <p class="field-error" id="admin-genre-error"></p>
+            </div>
+            <datalist id="genre-options"></datalist>
+            <div class="field">
+              <label for="admin-style">Точный жанр или стиль</label>
+              <input type="text" id="admin-style" name="style" aria-describedby="admin-style-error">
+              <p class="field-error" id="admin-style-error"></p>
+            </div>
+            <div class="field">
+              <label for="admin-label">Лейбл (необязательно)</label>
+              <input type="text" id="admin-label" name="label" aria-describedby="admin-label-error">
+              <p class="field-error" id="admin-label-error"></p>
+            </div>
+            <div class="field">
+              <label for="admin-mb-title">Название для поиска треклиста (необязательно)</label>
+              <input type="text" id="admin-mb-title" name="mb_title" aria-describedby="admin-mb-title-error">
+              <p class="field-error" id="admin-mb-title-error"></p>
+            </div>
+            <div class="field">
+              <label for="admin-cover">Обложка: путь img/файл.jpg или ссылка (необязательно)</label>
+              <input type="text" id="admin-cover" name="cover" aria-describedby="admin-cover-error">
+              <p class="field-error" id="admin-cover-error"></p>
+            </div>
+            <div class="field">
+              <label for="admin-description">Описание</label>
+              <textarea id="admin-description" name="description" rows="4" aria-describedby="admin-description-error"></textarea>
+              <p class="field-error" id="admin-description-error"></p>
+            </div>
+            <p class="form-status is-error" role="alert"></p>
+            <div class="form-actions">
+              <button type="submit">Добавить альбом</button>
+              <button type="button" class="button-secondary" id="admin-cancel" hidden>Отмена</button>
+            </div>
+          </form>
+        </section>
+        <section class="admin-card" aria-labelledby="albums-title">
+          <h2 id="albums-title">Альбомы в каталоге</h2>
+          <p class="form-status is-error" id="admin-error" role="alert"></p>
+          <ul class="admin-list" id="admin-list"></ul>
+        </section>
+      </div>
+      <div role="tabpanel" id="panel-messages" aria-labelledby="tab-messages" hidden>
+        <p class="form-status is-error" id="messages-error" role="alert"></p>
+        <p id="empty-messages" hidden>Сообщений пока нет.</p>
+        <ul class="messages" id="message-list"></ul>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+        <p>Каталог музыкальных альбомов: находите, оценивайте и дослушивайте до конца.</p>
+      </div>
+      <nav aria-label="Разделы сайта">
+        <p class="footer-title">Разделы</p>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="catalog.html">Каталог</a></li>
+          <li><a href="listen-later.html">Мой список</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
+          <li><a href="login.html" id="footer-auth">Войти</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="footer-title">Контакты</p>
+        <address>
+          <a href="https://t.me/loop_albums">Telegram</a>
+          <a href="https://vk.com/loop_albums">ВКонтакте</a>
+          <a href="tel:+79296427058">+7 (929) 642-70-58</a>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 LOOP · Данные о треклистах: Apple iTunes</p>
+      <a href="#top">Наверх ↑</a>
+    </div>
+  </footer>
+</body>
+</html>

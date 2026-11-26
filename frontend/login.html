@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Вход — LOOP</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("loop-theme")||"dark"}catch(e){}</script>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css?v=10">
+  <script src="script.js?v=10" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержимому</a>
+  <header class="site-header" id="top">
+    <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+    <nav aria-label="Главное меню">
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="listen-later.html">Мой список</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="login.html" id="auth-link" aria-current="page">Войти</a></li>
+        <li><button type="button" class="theme-toggle" id="theme-toggle" aria-label="Включить тёмную тему">☾</button></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main">
+    <div class="auth-page">
+      <h1>Вход и регистрация</h1>
+      <p class="lead">Ведите свой список, ставьте оценки и пишите рецензии.</p>
+      <div class="auth-card">
+        <div class="tabs" role="tablist" aria-label="Вход или регистрация">
+          <button type="button" class="tab" role="tab" id="tab-login" data-hash="login" aria-selected="true" aria-controls="panel-login">Вход</button>
+          <button type="button" class="tab" role="tab" id="tab-register" data-hash="register" aria-selected="false" aria-controls="panel-register" tabindex="-1">Регистрация</button>
+        </div>
+        <div role="tabpanel" id="panel-login" aria-labelledby="tab-login">
+          <form class="auth-form" id="login-form" novalidate>
+          <div class="field">
+            <label for="login-email">Почта</label>
+            <input type="email" id="login-email" name="email" autocomplete="email" aria-describedby="login-email-error">
+            <p class="field-error" id="login-email-error"></p>
+          </div>
+          <div class="field">
+            <label for="login-password">Пароль</label>
+            <input type="password" id="login-password" name="password" autocomplete="current-password" aria-describedby="login-password-error">
+            <p class="field-error" id="login-password-error"></p>
+          </div>
+            <p class="form-status is-error" role="alert"></p>
+            <button type="submit">Войти</button>
+          </form>
+        </div>
+        <div role="tabpanel" id="panel-register" aria-labelledby="tab-register" hidden>
+          <form class="auth-form" id="register-form" novalidate>
+          <div class="field">
+            <label for="register-name">Имя</label>
+            <input type="text" id="register-name" name="name" autocomplete="name" aria-describedby="register-name-error">
+            <p class="field-error" id="register-name-error"></p>
+          </div>
+          <div class="field">
+            <label for="register-email">Почта</label>
+            <input type="email" id="register-email" name="email" autocomplete="email" aria-describedby="register-email-error">
+            <p class="field-error" id="register-email-error"></p>
+          </div>
+          <div class="field">
+            <label for="register-password">Пароль</label>
+            <input type="password" id="register-password" name="password" autocomplete="new-password" aria-describedby="register-password-error register-password-hint">
+            <p class="field-hint" id="register-password-hint">Не короче 8 символов.</p>
+            <p class="field-error" id="register-password-error"></p>
+          </div>
+            <p class="form-status is-error" role="alert"></p>
+            <button type="submit">Создать аккаунт</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="LOOP, на главную"><img src="img/logo-mark.svg" alt="" width="52" height="34"><span>LOOP</span></a>
+        <p>Каталог музыкальных альбомов: находите, оценивайте и дослушивайте до конца.</p>
+      </div>
+      <nav aria-label="Разделы сайта">
+        <p class="footer-title">Разделы</p>
+        <ul>
+          <li><a href="index.html">Главная</a></li>
+          <li><a href="catalog.html">Каталог</a></li>
+          <li><a href="listen-later.html">Мой список</a></li>
+          <li><a href="contacts.html">Контакты</a></li>
+          <li><a href="login.html" id="footer-auth">Войти</a></li>
+        </ul>
+      </nav>
+      <div>
+        <p class="footer-title">Контакты</p>
+        <address>
+          <a href="https://t.me/loop_albums">Telegram</a>
+          <a href="https://vk.com/loop_albums">ВКонтакте</a>
+          <a href="tel:+79296427058">+7 (929) 642-70-58</a>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 LOOP · Данные о треклистах: Apple iTunes</p>
+      <a href="#top">Наверх ↑</a>
+    </div>
+  </footer>
+</body>
+</html>
