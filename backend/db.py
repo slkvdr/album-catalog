@@ -56,6 +56,13 @@ CREATE TABLE IF NOT EXISTS messages (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+-- Кэш ответов iTunes: треклисты запрашивает наш сервер, а не браузер посетителя
+CREATE TABLE IF NOT EXISTS itunes_cache (
+    url_key    TEXT PRIMARY KEY,
+    body       TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS sessions (
     token_hash TEXT PRIMARY KEY,
     user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,

@@ -815,9 +815,10 @@ function similarAlbums(album, limit = 4) {
     .map(item => item.other);
 }
 
-// --- внешний источник данных: iTunes Search API (Apple, ключ не нужен) ---
+// --- внешний источник данных: iTunes Search API (Apple, ключ не нужен), запросы через наш сервер ---
 
-const ITUNES_URL = 'https://itunes.apple.com';
+// Запросы идут через наш сервер (он обращается к iTunes и кэширует ответы)
+const ITUNES_URL = '/api/itunes';
 
 // Ошибка загрузки с причиной: 'network' (нет связи), 'limit' (источник ограничил запросы), 'not-found' (альбома нет в источнике)
 class SourceError extends Error {

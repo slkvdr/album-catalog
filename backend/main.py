@@ -1,6 +1,10 @@
 """LOOP: сервер каталога музыкальных альбомов (FastAPI + SQLite)."""
+import json
 import re
 import sqlite3
+import urllib.error
+import urllib.parse
+import urllib.request
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated, Literal
@@ -457,6 +461,51 @@ def list_genres(db: Db, q: str = "", limit: int = Query(default=20, ge=1, le=50)
         "SELECT COUNT(DISTINCT genre) FROM albums WHERE fold(genre) LIKE ? ESCAPE '\\'", (pattern,)
     ).fetchone()
     return {"total": total, "items": [{"genre": row["genre"], "count": row["n"]} for row in rows]}
+
+
+# ---------- Треклисты: сервер запрашивает iTunes и кэширует ответы ----------
+# Браузер посетителя обращается только к нашему сайту, поэтому его сеть или VPN на треклисты не влияют.
+# Пропускаются только два метода iTunes и только известные параметры.
+
+ITUNES_PARAMS = {
+    "search": {"term", "entity", "limit", "country", "media"},
+    "lookup": {"id", "entity", "country"},
+}
+ITUNES_CACHE_DAYS = 30
+
+
+@app.get("/api/itunes/{endpoint}")
+def itunes_proxy(endpoint: Literal["search", "lookup"], request: Request, db: Db):
+    params = sorted((k, v) for k, v in request.query_params.items() if k in ITUNES_PARAMS[endpoint])
+    if not params or any(len(value) > 200 for _, value in params):
+        raise HTTPException(status_code=400, detail="Некорректный запрос")
+    query = urllib.parse.urlencode(params)
+    key = f"{endpoint}?{query}"
+
+    cached = db.execute(
+        "SELECT body FROM itunes_cache WHERE url_key = ? AND created_at > datetime('now', ?)",
+        (key, f"-{ITUNES_CACHE_DAYS} days"),
+    ).fetchone()
+    if cached:
+        return Response(cached["body"], media_type="application/json")
+
+    try:
+        with urllib.request.urlopen(f"https://itunes.apple.com/{key}", timeout=10) as source:
+            body = source.read().decode("utf-8")
+        json.loads(body)  # убеждаемся, что пришёл JSON
+    except urllib.error.HTTPError as error:
+        status = 429 if error.code in (403, 429) else 502
+        raise HTTPException(status_code=status, detail="Источник данных ограничил запросы или недоступен")
+    except (urllib.error.URLError, TimeoutError, ValueError):
+        raise HTTPException(status_code=502, detail="Источник данных недоступен")
+
+    db.execute(
+        "INSERT INTO itunes_cache (url_key, body) VALUES (?, ?)"
+        " ON CONFLICT (url_key) DO UPDATE SET body = excluded.body, created_at = datetime('now')",
+        (key, body),
+    )
+    db.commit()
+    return Response(body, media_type="application/json")
 
 
 # ---------- Обратная связь: пишут все, читает и удаляет администратор ----------

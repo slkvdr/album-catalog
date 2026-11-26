@@ -18,7 +18,7 @@ uvicorn backend.main:app --reload
 
 Откройте http://127.0.0.1:8000. База `loop.db` создаётся и заполняется 21 альбомом при первом запуске.
 Описание API генерируется автоматически: http://127.0.0.1:8000/docs.
-Треклисты подтягиваются из Apple iTunes Search API, для них нужен интернет.
+Треклисты подтягиваются из Apple iTunes Search API через сервер приложения (ответы кэшируются в базе), для них нужен интернет.
 
 ## Как запустить через Docker
 Нужен Docker с Docker Compose.
@@ -59,6 +59,8 @@ docker compose up -d --build
 
 **reviews** — рецензии: `user_id` (FK), `album_id` (FK), `text`, `updated_at`; ключ — пара (user_id, album_id), одна рецензия на альбом.
 
+**itunes_cache** — кэш ответов iTunes: `url_key` (PK), `body`, `created_at`.
+
 **messages** — сообщения из формы контактов: `id`, `name`, `email`, `text`, `created_at`.
 
 **sessions** — вход пользователя: `token_hash` (PK), `user_id` (FK → users.id), `expires_at`.
@@ -73,6 +75,7 @@ docker compose up -d --build
 | GET /api/albums/{id}/ratings | всем | сводка и распределение оценок |
 | GET /api/albums/{id}/reviews | всем | рецензии альбома |
 | GET /api/genres | всем | жанры с числом альбомов, поиск по названию |
+| GET /api/itunes/search, /api/itunes/lookup | всем | прокси к iTunes Search API с кэшем (для треклистов) |
 | POST /api/contact | всем | сообщение из формы контактов |
 | POST /api/auth/register | всем | регистрация, сразу выполняет вход |
 | POST /api/auth/login, POST /api/auth/logout | всем | вход и выход |
