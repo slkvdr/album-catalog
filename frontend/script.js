@@ -866,26 +866,14 @@ function pickAlbum(results, album) {
     || (a.releaseDate || '').localeCompare(b.releaseDate || ''))[0];
 }
 
-// Альбомы, которых нет в iTunes для региона пользователя: треклисты заданы вручную как [название, длительность]
-const MANUAL_TRACKLISTS = {
-  12: [
-    ['Zitti e buoni', '3:14'], ['Coraline', '5:00'], ['Lividi sui gomiti', '2:45'], ['I Wanna Be Your Slave', '2:53'],
-    ['In nome del padre', '3:39'], ['For Your Love', '3:50'], ['La paura del buio', '3:29'], ["Vent'anni", '4:13']
-  ],
-  17: [
-    ['Cluster One', '5:55'], ['What Do You Want from Me', '4:21'], ['Poles Apart', '7:03'],
-    ['Marooned', '5:29'], ['A Great Day for Freedom', '4:17'], ['Wearing the Inside Out', '6:48'],
-    ['Take It Back', '6:12'], ['Coming Back to Life', '6:19'], ['Keep Talking', '6:10'],
-    ['Lost for Words', '5:14'], ['High Hopes', '8:31']
-  ]
-};
-
 const parseTime = text => text.split(':').reduce((total, part) => total * 60 + Number(part), 0) * 1000;
 
 // Возвращает { discs, source }: диски с треками и название источника для подписи под списком
 async function fetchTracklist(album) {
-  const manual = MANUAL_TRACKLISTS[album.id];
-  if (manual) return { discs: [manual.map(([title, time]) => ({ title, length: parseTime(time) }))], source: 'добавлено вручную' };
+  // Если в базе у альбома есть свой треклист (в iTunes его нет), внешний источник не нужен
+  if (album.tracks && album.tracks.length) {
+    return { discs: [album.tracks.map(([title, time]) => ({ title, length: parseTime(time) }))], source: 'добавлено вручную' };
+  }
 
   const cacheKey = 'loop-tracks-v4-' + album.id;
   try {

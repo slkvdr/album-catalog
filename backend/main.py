@@ -243,6 +243,13 @@ class LibraryIn(BaseModel):
     favorite: bool | None = None
 
 
+def album_json(row) -> dict:
+    """Альбом для ответа API: треклист из базы (строка JSON) превращается в список."""
+    album = dict(row)
+    album["tracks"] = json.loads(album["tracks"]) if album["tracks"] else None
+    return album
+
+
 def user_json(row) -> dict:
     return {
         "id": row["id"], "name": row["name"], "email": row["email"],
@@ -326,16 +333,16 @@ def change_password(data: PasswordIn, response: Response, user: CurrentUser, db:
 @app.get("/api/albums")
 def list_albums(db: Db):
     rows = db.execute(
-        "SELECT id, title, artist, year, genre, style, label, rating, base_rating, votes, review_count, cover, description, mb_title"
-        " FROM album_view ORDER BY id"
+        "SELECT id, title, artist, year, genre, style, label, rating, base_rating, votes, review_count,"
+        " cover, description, mb_title, tracks FROM album_view ORDER BY id"
     ).fetchall()
-    return [dict(row) for row in rows]
+    return [album_json(row) for row in rows]
 
 
 def fetch_album(db, album_id: int):
     return db.execute(
-        "SELECT id, title, artist, year, genre, style, label, rating, base_rating, votes, review_count, cover, description, mb_title"
-        " FROM album_view WHERE id = ?",
+        "SELECT id, title, artist, year, genre, style, label, rating, base_rating, votes, review_count,"
+        " cover, description, mb_title, tracks FROM album_view WHERE id = ?",
         (album_id,),
     ).fetchone()
 
@@ -345,7 +352,7 @@ def get_album(album_id: int, db: Db):
     row = fetch_album(db, album_id)
     if row is None:
         raise HTTPException(status_code=404, detail="Альбом не найден")
-    return dict(row)
+    return album_json(row)
 
 
 @app.post("/api/albums", status_code=201)
@@ -357,7 +364,7 @@ def create_album(data: AlbumIn, admin: Admin, db: Db):
          data.rating, data.cover or DEFAULT_COVER, data.description, data.mb_title),
     )
     db.commit()
-    return dict(fetch_album(db, cursor.lastrowid))
+    return album_json(fetch_album(db, cursor.lastrowid))
 
 
 @app.put("/api/albums/{album_id}")
@@ -371,7 +378,7 @@ def update_album(album_id: int, data: AlbumIn, admin: Admin, db: Db):
     db.commit()
     if cursor.rowcount == 0:
         raise HTTPException(status_code=404, detail="Альбом не найден")
-    return dict(fetch_album(db, album_id))
+    return album_json(fetch_album(db, album_id))
 
 
 @app.delete("/api/albums/{album_id}", status_code=204)

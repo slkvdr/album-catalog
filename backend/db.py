@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS albums (
     rating      REAL NOT NULL,
     cover       TEXT NOT NULL,
     description TEXT NOT NULL,
-    mb_title    TEXT
+    mb_title    TEXT,
+    tracks      TEXT  -- треклист вручную: JSON [[название, "м:сс"], ...]; NULL — берётся из iTunes
 );
 
 CREATE TABLE IF NOT EXISTS library (
@@ -72,7 +73,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 -- Альбом вместе с оценкой слушателей: пока никто не оценил, показывается стартовая оценка из albums.rating
 DROP VIEW IF EXISTS album_view;
 CREATE VIEW album_view AS
-SELECT a.id, a.title, a.artist, a.year, a.genre, a.style, a.label, a.cover, a.description, a.mb_title,
+SELECT a.id, a.title, a.artist, a.year, a.genre, a.style, a.label, a.cover, a.description, a.mb_title, a.tracks,
        a.rating AS base_rating,
        (SELECT COUNT(l.rating) FROM library l WHERE l.album_id = a.id) AS votes,
        ROUND(COALESCE((SELECT AVG(l.rating) FROM library l WHERE l.album_id = a.id), a.rating), 1) AS rating,
@@ -98,6 +99,9 @@ def _upgrade(connection) -> int:
     """Создаёт схему; базу старой версии переносит без потери данных (до версии 2 статус был обязательным).
     Возвращает версию, в которой была база до запуска."""
     (version,) = connection.execute("PRAGMA user_version").fetchone()
+    albums_exist = connection.execute("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'albums'").fetchone()
+    if albums_exist and "tracks" not in [row[1] for row in connection.execute("PRAGMA table_info(albums)")]:
+        connection.execute("ALTER TABLE albums ADD COLUMN tracks TEXT")  # база до появления ручных треклистов
     has_old_library = version < 2 and connection.execute(
         "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'library'"
     ).fetchone()
@@ -112,7 +116,7 @@ def _upgrade(connection) -> int:
         connection.execute("DROP TABLE library_old")
     if "favorite" not in [row[1] for row in connection.execute("PRAGMA table_info(library)")]:
         connection.execute("ALTER TABLE library ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0")  # база до появления «Любимого»
-    connection.execute("PRAGMA user_version = 3")
+    connection.execute("PRAGMA user_version = 4")
     return version
 
 
@@ -123,23 +127,32 @@ def init_db():
     connection = sqlite3.connect(DB_PATH)
     try:
         connection.execute("PRAGMA foreign_keys = ON")
-        if _upgrade(connection) >= 3:
+        previous = _upgrade(connection)
+        if previous >= 4:
             connection.commit()
             return
         albums = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-        connection.executemany(
-            "INSERT INTO albums (id, title, artist, year, genre, style, label, rating, cover, description, mb_title)"
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-            " ON CONFLICT (id) DO UPDATE SET title = excluded.title, artist = excluded.artist,"
-            " year = excluded.year, genre = excluded.genre, style = excluded.style, label = excluded.label,"
-            " rating = excluded.rating, cover = excluded.cover, description = excluded.description,"
-            " mb_title = excluded.mb_title",
-            [
-                (a["id"], a["title"], a["artist"], a["year"], a["genre"], a["style"], a.get("label"),
-                 a["rating"], a["cover"], a["description"], a.get("mbTitle"))
-                for a in albums
-            ],
-        )
+        if previous < 3:
+            connection.executemany(
+                "INSERT INTO albums (id, title, artist, year, genre, style, label, rating, cover, description, mb_title, tracks)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                " ON CONFLICT (id) DO UPDATE SET title = excluded.title, artist = excluded.artist,"
+                " year = excluded.year, genre = excluded.genre, style = excluded.style, label = excluded.label,"
+                " rating = excluded.rating, cover = excluded.cover, description = excluded.description,"
+                " mb_title = excluded.mb_title, tracks = excluded.tracks",
+                [
+                    (a["id"], a["title"], a["artist"], a["year"], a["genre"], a["style"], a.get("label"),
+                     a["rating"], a["cover"], a["description"], a.get("mbTitle"),
+                     json.dumps(a["tracks"], ensure_ascii=False) if a.get("tracks") else None)
+                    for a in albums
+                ],
+            )
+        else:
+            # база версии 3: каталог уже в рабочем состоянии, заполняем только пустые треклисты
+            connection.executemany(
+                "UPDATE albums SET tracks = ? WHERE id = ? AND tracks IS NULL",
+                [(json.dumps(a["tracks"], ensure_ascii=False), a["id"]) for a in albums if a.get("tracks")],
+            )
         connection.commit()
     finally:
         connection.close()

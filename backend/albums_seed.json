@@ -143,7 +143,17 @@
     "rating": 4,
     "cover": "img/Teatro_dira_Vol.1.jpg",
     "mbTitle": "Teatro d'ira Vol. I",
-    "description": "Второй студийный альбом итальянской группы Måneskin, вышедший в марте 2021 года. Среди песен — «Zitti e buoni» и «I Wanna Be Your Slave»."
+    "description": "Второй студийный альбом итальянской группы Måneskin, вышедший в марте 2021 года. Среди песен — «Zitti e buoni» и «I Wanna Be Your Slave».",
+    "tracks": [
+      ["Zitti e buoni", "3:14"],
+      ["Coraline", "5:00"],
+      ["Lividi sui gomiti", "2:45"],
+      ["I Wanna Be Your Slave", "2:53"],
+      ["In nome del padre", "3:39"],
+      ["For Your Love", "3:50"],
+      ["La paura del buio", "3:29"],
+      ["Vent'anni", "4:13"]
+    ]
   },
   {
     "id": 13,
@@ -178,7 +188,21 @@
     "style": "психоделическая музыка",
     "rating": 4.2,
     "cover": "img/Deadbeat.jpg",
-    "description": "Пятый студийный альбом проекта Tame Impala (Кевин Паркер), вышедший в 2025 году."
+    "description": "Пятый студийный альбом проекта Tame Impala (Кевин Паркер), вышедший в 2025 году.",
+    "tracks": [
+      ["My Old Ways", "4:58"],
+      ["No Reply", "3:35"],
+      ["Dracula", "3:25"],
+      ["Loser", "3:43"],
+      ["Oblivion", "4:28"],
+      ["Not My World", "4:14"],
+      ["Piece of Heaven", "4:44"],
+      ["Obsolete", "4:23"],
+      ["Ethereal Connection", "7:42"],
+      ["See You on Monday (You're Lost)", "3:34"],
+      ["Afterthought", "4:01"],
+      ["End of Summer", "7:12"]
+    ]
   },
   {
     "id": 16,
@@ -202,7 +226,20 @@
     "label": "EMI",
     "rating": 4.4,
     "cover": "img/The_Division_Bell.jpg",
-    "description": "Четырнадцатый студийный альбом Pink Floyd, вышедший в марте 1994 года."
+    "description": "Четырнадцатый студийный альбом Pink Floyd, вышедший в марте 1994 года.",
+    "tracks": [
+      ["Cluster One", "5:55"],
+      ["What Do You Want from Me", "4:21"],
+      ["Poles Apart", "7:03"],
+      ["Marooned", "5:29"],
+      ["A Great Day for Freedom", "4:17"],
+      ["Wearing the Inside Out", "6:48"],
+      ["Take It Back", "6:12"],
+      ["Coming Back to Life", "6:19"],
+      ["Keep Talking", "6:10"],
+      ["Lost for Words", "5:14"],
+      ["High Hopes", "8:31"]
+    ]
   },
   {
     "id": 18,
